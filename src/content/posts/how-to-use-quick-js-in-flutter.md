@@ -8,8 +8,6 @@ tags:
   - QuickJS
   - Flutter
   - Dart FFI
-  - Android
-  - Windows
 ---
 
 ## 1. QuickJS 介绍

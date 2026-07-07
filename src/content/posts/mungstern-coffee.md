@@ -7,7 +7,6 @@ categories:
 tags:
   - 虚构
   - 咖啡
-  - 蒙斯特
   - 练笔
 ---
 
