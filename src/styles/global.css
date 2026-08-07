@@ -29,6 +29,11 @@
   box-sizing: border-box;
 }
 
+* {
+  scrollbar-width: thin;
+  scrollbar-color: gray transparent;
+}
+
 html {
   font-size: 18px;
   -webkit-font-smoothing: antialiased;
