@@ -1,8 +1,4 @@
 :root {
-  --font-body: "Noto Serif SC", Georgia, "Times New Roman", "Songti SC", SimSun, serif;
-  --font-heading: var(--font-body);
-  --font-mono: "JetBrains Mono", "Fira Code", Consolas, monospace;
-
   --color-text: #333;
   --color-text-secondary: #555;
   --color-text-tertiary: #888;
@@ -41,7 +37,6 @@ html {
 }
 
 body {
-  font-family: var(--font-body);
   color: var(--color-text);
   background-color: var(--color-bg);
   line-height: 1.7;
