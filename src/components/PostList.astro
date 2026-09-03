@@ -69,6 +69,7 @@ const { posts, filterable = false, flushTop = false } = Astro.props;
   }
 
   .post-title {
+    font-family: var(--font-heading);
     font-size: 1.125rem;
     font-weight: 600;
     letter-spacing: 0;
@@ -77,12 +78,14 @@ const { posts, filterable = false, flushTop = false } = Astro.props;
   }
 
   .post-description {
+    font-family: var(--font-body);
     font-size: 0.9375rem;
     color: var(--color-text-secondary);
     line-height: 1.5;
   }
 
   .post-item time {
+    font-family: var(--font-heading);
     font-size: 0.75rem;
     color: var(--color-text-tertiary);
     margin-top: var(--space-xs);
