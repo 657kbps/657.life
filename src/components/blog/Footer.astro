@@ -1,15 +1,16 @@
 ---
-const year = new Date().getFullYear();
+const startYear = 2023
+const currentYear = new Date().getFullYear();
 ---
 
 <footer class="footer">
-  <p>&copy; {year} 657.life</p>
+  <p>&copy; {startYear} - {currentYear} &nbsp; 657.life</p>
 </footer>
 
 <style>
   .footer {
     margin-top: var(--space-2xl);
-    padding: var(--space-lg) 0;
+    padding: var(--space-lg) var(--space-sm);
     border-top: 1px solid var(--color-border);
   }
 
