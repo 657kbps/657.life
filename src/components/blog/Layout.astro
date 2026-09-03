@@ -1,0 +1,96 @@
+---
+import Analytics from "@vercel/analytics/astro";
+
+import Head from "../Head.astro";
+import Nav from "./Nav.astro";
+import Footer from "./Footer.astro";
+import Sidebar from "./Sidebar.astro";
+import "../../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+  ogType?: "website" | "article";
+  ogImage?: string;
+}
+
+const {
+  title,
+  description = "Nothing happened today.",
+  ogType = "website",
+  ogImage,
+} = Astro.props;
+
+const hasAfterNav = Astro.slots.has("after-nav");
+---
+
+<!doctype html>
+<html lang="en">
+  <Head title={title} description={description} ogType={ogType} ogImage={ogImage}>
+    <slot name="head" slot="head" />
+  </Head>
+  <body>
+    <div class:list={["page", { "page-has-after-nav": hasAfterNav }]}>
+      <Nav />
+      {hasAfterNav && (
+        <div class="after-nav">
+          <slot name="after-nav" />
+        </div>
+      )}
+      <div class="page-content">
+        <main>
+          <slot />
+        </main>
+        <Sidebar />
+      </div>
+      <Footer />
+    </div>
+
+    <Analytics />
+  </body>
+</html>
+
+<style>
+  .page {
+    max-width: var(--width-page);
+    margin: 0 auto;
+    padding: 0 var(--space-lg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .page-content {
+    display: grid;
+    grid-template-columns: minmax(0, var(--width-content)) var(--width-sidebar);
+    gap: var(--space-xl);
+    justify-content: space-between;
+    align-items: start;
+    flex: 1;
+    margin-top: var(--space-2xl);
+  }
+
+  .after-nav {
+    margin-top: var(--space-lg);
+  }
+
+  .page-has-after-nav .page-content {
+    margin-top: var(--space-xl);
+  }
+
+  @media (max-width: 900px) {
+    .page {
+      padding: 0 var(--space-md);
+    }
+
+    .page-content {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-xl);
+    }
+  }
+</style>

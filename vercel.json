@@ -1,0 +1,24 @@
+{
+  "redirects": [
+    {
+      "source": "/posts/:path*",
+      "destination": "/blog/posts/:path*",
+      "statusCode": 301
+    },
+    {
+      "source": "/list",
+      "destination": "/blog/list",
+      "statusCode": 301
+    },
+    {
+      "source": "/rss.xml",
+      "destination": "/blog/rss.xml",
+      "statusCode": 301
+    },
+    {
+      "source": "/search-index.json",
+      "destination": "/blog/search-index.json",
+      "statusCode": 301
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 ---
-import Layout from "../../components/Layout.astro";
-import Article from "../../components/Article.astro";
+import Layout from "../../../components/blog/Layout.astro";
+import Article from "../../../components/blog/Article.astro";
 import { getCollection, render } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 
@@ -17,7 +17,7 @@ export async function getStaticPaths() {
 const post: Post = Astro.props;
 const { Content } = await render(post);
 
-const postUrl = new URL(`/posts/${post.id}`, Astro.site).href;
+const postUrl = new URL(`/blog/posts/${post.id}`, Astro.site).href;
 
 const jsonLd = {
   "@context": "https://schema.org",

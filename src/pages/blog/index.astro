@@ -1,0 +1,30 @@
+---
+import Layout from "../../components/blog/Layout.astro";
+import PostList from "../../components/blog/PostList.astro";
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+
+type Post = CollectionEntry<"posts">;
+
+const posts = (await getCollection("posts")).sort(
+  (a: Post, b: Post) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "657.life",
+  "description": "The boring life of 657",
+  "url": Astro.site?.href,
+};
+---
+
+<Layout
+  title="657.life"
+  description="The boring life of 657"
+>
+  <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <section class="home">
+    <PostList posts={posts} flushTop />
+  </section>
+</Layout>
