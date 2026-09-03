@@ -1,5 +1,5 @@
 :root {
-  --font-body: "Noto Serif SC", Georgia, "Times New Roman", "Songti SC", SimSun, serif;
+  --font-body: "Noto Serif SC Variable", Georgia, "Times New Roman", "Songti SC", SimSun, serif;
   --font-heading: var(--font-body);
   --font-mono: "JetBrains Mono", "Fira Code", Consolas, monospace;
 
