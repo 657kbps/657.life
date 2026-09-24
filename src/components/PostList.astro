@@ -30,7 +30,7 @@ const { posts, filterable = false, flushTop = false } = Astro.props;
 
       return (
         <li class="post-item" {...itemAttrs}>
-          <a href={`/blog/posts/${post.id}`}>
+          <a href={`/posts/${post.id}`}>
             <span class="post-title">{post.data.title}</span>
             <span class="post-description">{post.data.description}</span>
             <time datetime={post.data.date.toISOString()}>{formattedDate}</time>

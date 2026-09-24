@@ -1,31 +1,30 @@
 ---
-import Head from "../components/Head.astro";
-import "../styles/global.css";
+import Layout from "../components/Layout.astro";
+import PostList from "../components/PostList.astro";
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+
+type Post = CollectionEntry<"posts">;
+
+const posts = (await getCollection("posts")).sort(
+  (a: Post, b: Post) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "657.life",
+  "description": "The boring life of 657",
+  "url": Astro.site?.href,
+};
 ---
 
-<!doctype html>
-<html lang="zh-CN">
-  <Head title="657.life" description="The boring life of 657" />
-  <body>
-    <div class="main">
-      <p class="intro">Hi, I'm 657.</p>
-      <a href="/blog">* Blog</a>
-    </div>
-  </body>
-</html>
-
-<style>
-  .main {
-    display: flex;
-    flex-direction: column;
-    min-height: 100dvh;
-    max-width: min(500px, 60vw);
-    margin: 0 auto;
-    justify-content: center;
-    font-family: var(--font-mono);
-  }
-
-  .intro {
-    margin-bottom: 1em;
-  }
-</style>
+<Layout
+  title="657.life"
+  description="The boring life of 657"
+>
+  <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <section>
+    <PostList posts={posts} flushTop />
+  </section>
+</Layout>

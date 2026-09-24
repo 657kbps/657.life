@@ -23,7 +23,7 @@ const links = [
 ];
 
 const taxonomyHref = (type: "category" | "tag", value: string) =>
-  `/blog/list?${type}=${encodeURIComponent(value)}`;
+  `/list?${type}=${encodeURIComponent(value)}`;
 ---
 
 <aside class="sidebar" aria-label="Sidebar">
@@ -44,7 +44,7 @@ const taxonomyHref = (type: "category" | "tag", value: string) =>
   <section class="sidebar-section">
     <h2 class="sidebar-title">Recent</h2>
     <ul class="sidebar-list recent-list">
-      {recentPosts.map((post: Post) => <li><a href={`/blog/posts/${post.id}`}>{post.data.title}</a></li>)}
+      {recentPosts.map((post: Post) => <li><a href={`/posts/${post.id}`}>{post.data.title}</a></li>)}
     </ul>
   </section>
 

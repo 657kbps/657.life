@@ -18,7 +18,7 @@ const formattedDate = date.toLocaleDateString("en", {
   day: "numeric",
 });
 const taxonomyHref = (type: "category" | "tag", value: string) =>
-  `/blog/list?${type}=${encodeURIComponent(value)}`;
+  `/list?${type}=${encodeURIComponent(value)}`;
 ---
 
 <article class="article">
