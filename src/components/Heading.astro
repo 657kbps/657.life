@@ -14,7 +14,7 @@ const { as: Tag = "h1" }: Props = Astro.props;
   .heading {
     font-family: var(--font-heading);
     color: var(--color-text);
-    line-height: 1.2;
+    line-height: 1.5;
   }
 
   .heading-h1 {
@@ -35,5 +35,11 @@ const { as: Tag = "h1" }: Props = Astro.props;
     font-weight: 600;
     margin-top: var(--space-lg);
     margin-bottom: var(--space-sm);
+  }
+
+  @media screen and (max-width: 450px) {
+    .heading-h1 {
+      font-size: 1.8rem;
+    }
   }
 </style>
