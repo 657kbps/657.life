@@ -1,6 +1,7 @@
 ---
 import Layout from "../../components/Layout.astro";
 import Article from "../../components/Article.astro";
+import BackToTop from "../../components/BackToTop.astro";
 import { getCollection, render } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 
@@ -54,4 +55,5 @@ const jsonLd = {
   >
     <Content />
   </Article>
+  <BackToTop trigger=".article-header h1" />
 </Layout>
