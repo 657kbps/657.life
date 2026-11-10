@@ -349,10 +349,10 @@ flowchart TD
 2. **只读巡检与状态修改的物理隔离（Read-Only Sentinel vs. Gated Actions）**：  
    在后台自主监测阶段，三家系统均推行严格的“双重沙箱”与读写分离机制（如 OpenAI 的 **Proactive Research 只读哨兵模式** 与 Claude Duet 的受限执行流）。在自主监控工作区时，Agent 仅拥有无副作用的读权限，被物理剥夺任何发送网络包、修改数据库或提交生产代码的写权限；只有当生成了结构化预案并通过人类授权网关后，系统才调用写操作沙箱，从根本上压制越权风险。
 3. **分层级联算力核算模型（Tiered Inference Economics）**：  
-   如果让最顶级的前沿大模型（GPT-6 Astra 或 Claude 3.8 Opus）全天候 24 小时执行高频轮询，单用户的月度推理账单将呈指数级爆炸。因此，三者底层均构建了严格的阶梯算力栈：
+   如果让最顶级的前沿大模型（GPT-6 Astra 或 Claude Opus 5.5）全天候 24 小时执行高频轮询，单用户的月度推理账单将呈指数级爆炸。因此，三者底层均构建了严格的阶梯算力栈：
    - 规则层与差分过滤：采用 AST 语法树差分、文件系统 Inotify 监听与布隆过滤器（0 Token 消耗）；
-   - 轻量路由与线索匹配：调用超轻量高速模型（如 GPT-6 Luna 或 Claude 3.5 Haiku，每百万 Token 仅数美分），评估意图激活阈值；
-   - 核心长程推理与方案生成：仅在确认存在实质性高价值决策时，才唤醒旗舰模型（GPT-6 Astra、Claude 3.5/3.8 Sonnet、Grok 3）。
+   - 轻量路由与线索匹配：调用超轻量高速模型（如 GPT-6 Luna 或 Claude 5.5 Haiku，每百万 Token 仅数美分），评估意图激活阈值；
+   - 核心长程推理与方案生成：仅在确认存在实质性高价值决策时，才唤醒旗舰模型（GPT-6 Astra、Claude Opus 5.5、Grok 4.7）。
 4. **机密凭证的黑盒带外注入（Out-of-Band Secret Management）**：  
    用户的 GitHub Token、Slack 授权、数据库连接串全部托管在专有的安全保险库（Vault/KMS）中。凭证通过带外通道直接注入容器网络底层，**对大模型自身的提示词上下文和模型权重完全不可见**，从物理上切断了黑客利用间接提示词注入（Indirect Prompt Injection）诱骗 Agent 套取凭证的攻击链条。
 
@@ -361,7 +361,7 @@ flowchart TD
 
 | 核心对比维度 | **Anthropic Claude Duet** | **OpenAI Dots (Operator)** | **xAI Grok Bot** |
 | :--- | :--- | :--- | :--- |
-| **底层核心模型栈** | Claude 3.5/3.8 Sonnet / Opus（长程推理与宪法级对齐） | GPT-6 Astra（核心决策）+ GPT-6.1 Sol（高通量执行）+ Luna | Grok 3 / Grok Code + Colossus 100k H100 超算实时推理 |
+| **底层核心模型栈** | Claude Opus 5.5（长程推理与宪法级对齐） | GPT-6 Astra（核心决策）+ GPT-6.1 Sol（高通量执行）+ Luna | Grok 4.7 / Grok Code + Colossus 100k H100 超算实时推理 |
 | **执行环境机制** | 隔离云端专用 VM（Dedicated Cloud VM）+ 不可篡改审计日志 | 隔离云端 VM + 专有无头浏览器 (Sandboxed Browser) + 4,000+ 工具生态 | 专属云端电脑（Dedicated Computer）+ 直通 X 生态毫秒级实时数据流 |
 | **多智能体协作架构** | **单线程持久演进（Single Persistent Timeline）**：强调全局记忆一致性，严禁多会话碎裂 | **中央控制平面单主代理（Central Control Plane）**：初期由单一主 Dot 统筹，逐步开放特化多 Agent | **原生多 Agent 并发舰队（Multi-Bot Swarms）**：首发即支持销售、运维、排障等多 Bot 后台并行作业 |
 | **主动介入哲学** | **节奏化交付与心流守护（Morning Brief）**：硬中断预算硬约束，每日固定晨间简报呈递，极度克制 | **断点治理与人机仲裁（Action Review Gates）**：长链路端到端自动化推进，高危破坏性动作弹出 Diff 卡 | **实时全网态势主动拦截（Live Ambient Interception）**：主打 CVE 漏洞、生产事故与舆情异动的秒级主动预警 |
@@ -398,7 +398,7 @@ flowchart TD
 | **端侧传感器流（Sensor Stream）** | 端侧麦克风、按键、屏幕画面的轻量嵌入模型常态监听 | 实时 | 高（端侧硬件功耗与电量消耗） | 智能座舱、可穿戴设备、工业现场安全作业 |
 
 #### 2. 三层递进过滤流水线（Tiered Context Filtering）
-如果系统对接收到的每一次环境细微变动都直接调用顶级大模型（如 Claude 3.5 Sonnet 或 GPT-5），不仅会引发系统响应雪崩，更会导致月度 API 账单呈指数级爆炸。工业级系统必须部署 **三层递进过滤架构**：
+如果系统对接收到的每一次环境细微变动都直接调用顶级大模型，不仅会引发系统响应雪崩，更会导致月度 API 账单呈指数级爆炸。工业级系统必须部署 **三层递进过滤架构**：
 
 ```mermaid
 flowchart TD
