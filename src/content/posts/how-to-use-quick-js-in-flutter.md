@@ -1,6 +1,6 @@
 ---
 title: 如何在 Flutter 中使用 QuickJS
-description: 本文系统介绍在 Flutter 中基于 Dart FFI 嵌入轻量级 JavaScript 引擎 QuickJS 的实践方案，涵盖 Windows 与 Android 动态库编译、使用 ffigen 自动生成 C 语言绑定，以及基础代码执行与内存生命周期管理。
+description: 本文基于 Dart FFI（Foreign Function Interface）技术，详细介绍在 Flutter 应用中集成并使用 QuickJS 引擎的完整实践流程。
 date: 2023-11-02
 categories:
   - 编程
@@ -12,7 +12,7 @@ tags:
 
 在跨平台移动与桌面应用开发中，动态执行 JavaScript 脚本是一项常见需求——无论是实现规则引擎、动态业务配置，还是复用既有的 JS 业务逻辑。虽然可以通过嵌入系统 WebView 实现脚本执行，但 WebView 内存占用大、启动开销高，且无法在各端提供高度一致的运行环境。
 
-为此，直接将轻量级 JavaScript 引擎作为原生库嵌入到 Flutter 宿主进程中，成为更为高效的选择。本文将基于 Dart FFI（Foreign Function Interface）技术，详细介绍在 Flutter 应用中集成并使用 QuickJS 引擎的完整实践流程。
+为此，直接将轻量级 JavaScript 引擎作为原生库嵌入到 Flutter 宿主进程中，成为更为高效的选择。本文基于 Dart FFI（Foreign Function Interface）技术，详细介绍在 Flutter 应用中集成并使用 QuickJS 引擎的完整实践流程。
 
 ## 1. QuickJS 引擎概述
 
