@@ -6,35 +6,36 @@ interface Props {
   title: string;
   date: Date;
   description: string;
-  categories: string[];
   tags: string[];
 }
 
-const { title, date, categories, tags } = Astro.props;
+const { title, date, tags } = Astro.props;
 
 const formattedDate = date.toLocaleDateString("en", {
   year: "numeric",
   month: "long",
   day: "numeric",
 });
-const taxonomyHref = (type: "category" | "tag", value: string) =>
-  `/list?${type}=${encodeURIComponent(value)}`;
+const tagHref = (tag: string) => `/list?tag=${encodeURIComponent(tag)}`;
 ---
 
 <article class="article">
   <header class="article-header">
     <Heading as="h1">{title}</Heading>
-    <p class="article-meta">
+    <p class="article-time">
       <time datetime={date.toISOString()}>{formattedDate}</time>
     </p>
-    {(categories.length > 0 || tags.length > 0) && (
-      <div class="article-taxonomy">
-        {categories.map((category) => (
-          <a href={taxonomyHref("category", category)}>{category}</a>
-        ))}
-        {tags.map((tag) => (
-          <a href={taxonomyHref("tag", tag)}>{tag}</a>
-        ))}
+    {tags.length > 0 && (
+      <div class="article-tags">
+        <span class="article-tag-prefix">Tags:</span>
+        {tags.map((tag, index) => {
+          return (
+            <span>
+              <a href={tagHref(tag)}>{tag}</a>
+              {index !== tags.length - 1 ? "，" : ""}
+            </span>
+          );
+        })}
       </div>
     )}
   </header>
@@ -57,29 +58,34 @@ const taxonomyHref = (type: "category" | "tag", value: string) =>
     margin-bottom: var(--space-sm);
   }
 
-  .article-meta {
+  .article-time {
     font-family: var(--font-heading);
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     color: var(--color-text-tertiary);
   }
 
-  .article-taxonomy {
+  .article-tag-prefix {
+    margin-right: .5em;
+  }
+
+  .article-tags {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: var(--space-xs) var(--space-sm);
+    gap: var(--space-xs) 0;
     margin-top: var(--space-xs);
     font-family: var(--font-heading);
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
+    color: var(--color-text-tertiary);
   }
 
-  .article-taxonomy a {
+  .article-tags a {
     color: var(--color-text-tertiary);
     text-decoration: none;
     transition: color 0.15s ease;
   }
 
-  .article-taxonomy a:hover {
+  .article-tags a:hover {
     color: var(--color-text);
   }
 </style>

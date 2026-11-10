@@ -2,9 +2,8 @@
 title: 如何在 Flutter 中使用 QuickJS
 description: 本文基于 Dart FFI（Foreign Function Interface）技术，详细介绍在 Flutter 应用中集成并使用 QuickJS 引擎的完整实践流程。
 date: 2023-11-02
-categories:
-  - 编程
 tags:
+  - 编程
   - QuickJS
   - Flutter
   - Dart FFI

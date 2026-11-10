@@ -26,7 +26,7 @@ const jsonLd = {
   "headline": post.data.title,
   "description": post.data.description,
   "datePublished": post.data.date.toISOString(),
-  "keywords": [...post.data.categories, ...post.data.tags].join(", "),
+  "keywords": post.data.tags.join(", "),
   "url": postUrl,
   "mainEntityOfPage": {
     "@type": "WebPage",
@@ -55,7 +55,6 @@ const jsonLd = {
     title={post.data.title}
     date={post.data.date}
     description={post.data.description}
-    categories={post.data.categories}
     tags={post.data.tags}
   >
     <Content />

@@ -23,7 +23,6 @@ const { posts, filterable = false, flushTop = false } = Astro.props;
       const itemAttrs = filterable
         ? {
             "data-post-item": "",
-            "data-categories": JSON.stringify(post.data.categories),
             "data-tags": JSON.stringify(post.data.tags),
           }
         : {};

@@ -8,9 +8,6 @@ const posts = (await getCollection("posts")).sort(
   (a: Post, b: Post) => b.data.date.valueOf() - a.data.date.valueOf()
 );
 
-const categories = Array.from(
-  new Set(posts.flatMap((post: Post) => post.data.categories))
-).sort((a, b) => a.localeCompare(b, "en"));
 const tags = Array.from(
   new Set(posts.flatMap((post: Post) => post.data.tags))
 ).sort((a, b) => a.localeCompare(b, "en"));
@@ -26,28 +23,17 @@ const links = [
   },
 ];
 
-const taxonomyHref = (type: "category" | "tag", value: string) =>
-  `/list?${type}=${encodeURIComponent(value)}`;
+const tagHref = (tag: string) =>
+  `/list?tag=${encodeURIComponent(tag)}`;
 ---
 
 <aside class="sidebar" aria-label="Sidebar">
-  <section class="sidebar-section">
-    <h2 class="sidebar-title">Categories</h2>
-    <ul class="sidebar-list">
-      {categories.map((category) => (
-        <li>
-          <a href={taxonomyHref("category", category)}>{category}</a>
-        </li>
-      ))}
-    </ul>
-  </section>
-
   <section class="sidebar-section">
     <h2 class="sidebar-title">Tags</h2>
     <ul class="tag-list">
       {tags.map((tag) => (
         <li>
-          <a href={taxonomyHref("tag", tag)}>{tag}</a>
+          <a href={tagHref(tag)}>{tag}</a>
         </li>
       ))}
     </ul>

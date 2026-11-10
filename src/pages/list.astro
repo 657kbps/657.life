@@ -14,12 +14,12 @@ const posts = (await getCollection("posts")).sort(
 
 <Layout
   title="List - 657.life"
-  description="Browse posts on 657.life by category and tag."
+  description="Browse posts on 657.life by tag."
 >
   <script is:inline>
     (() => {
       const params = new URLSearchParams(window.location.search);
-      const hasFilter = params.get("category")?.trim() || params.get("tag")?.trim();
+      const hasFilter = params.get("tag")?.trim() || params.get("category")?.trim();
       if (hasFilter) {
         document.documentElement.classList.add("list-filter-pending");
       }
@@ -35,7 +35,6 @@ const posts = (await getCollection("posts")).sort(
     (() => {
       const labels = {
         heading: "Posts",
-        categoryLabel: "Category: ",
         tagLabel: "Tag: ",
       };
 
@@ -45,12 +44,7 @@ const posts = (await getCollection("posts")).sort(
 
       function getFilter() {
         const params = new URLSearchParams(window.location.search);
-        const category = params.get("category")?.trim();
-        const tag = params.get("tag")?.trim();
-
-        if (category) {
-          return { type: "category", value: category };
-        }
+        const tag = params.get("tag")?.trim() || params.get("category")?.trim();
 
         if (tag) {
           return { type: "tag", value: tag };
@@ -73,7 +67,7 @@ const posts = (await getCollection("posts")).sort(
       function matchesFilter(item, filter) {
         if (!filter) return true;
 
-        const values = parseList(filter.type === "category" ? item.dataset.categories : item.dataset.tags);
+        const values = parseList(item.dataset.tags);
         return values.includes(filter.value);
       }
 
@@ -85,8 +79,7 @@ const posts = (await getCollection("posts")).sort(
           return;
         }
 
-        const prefix = filter.type === "category" ? labels.categoryLabel : labels.tagLabel;
-        heading.textContent = `${prefix}${filter.value}`;
+        heading.textContent = `${labels.tagLabel}${filter.value}`;
       }
 
       function applyFilter() {
