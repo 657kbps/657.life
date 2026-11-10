@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://657.life/sitemap-index.xml
