@@ -25,25 +25,16 @@ const { trigger } = Astro.props;
 </div>
 
 <style>
+  /* 将返回顶部按钮直接固定在整个视窗的右下角，留有 2rem 间距 */
   .back-to-top-bar {
     position: fixed;
-    left: 0;
-    right: 0;
-    bottom: var(--space-lg);
-    max-width: var(--width-page);
-    margin: 0 auto;
-    padding: 0 var(--space-lg);
-    display: grid;
-    grid-template-columns: minmax(0, var(--width-content)) var(--width-sidebar);
-    gap: var(--space-xl);
-    justify-content: space-between;
+    right: 2rem;
+    bottom: 2rem;
     pointer-events: none;
-    z-index: 10;
+    z-index: 100;
   }
 
   .back-to-top {
-    grid-column: 2;
-    justify-self: start;
     pointer-events: auto;
     width: 2.5rem;
     height: 2.5rem;
@@ -54,6 +45,7 @@ const { trigger } = Astro.props;
     border: 1px solid var(--color-border);
     color: var(--color-text-secondary);
     cursor: pointer;
+    border-radius: 4px;
     opacity: 0;
     visibility: hidden;
     transform: translateY(8px);
@@ -62,7 +54,8 @@ const { trigger } = Astro.props;
       transform 0.15s ease,
       visibility 0.15s ease,
       color 0.15s ease,
-      border-color 0.15s ease;
+      border-color 0.15s ease,
+      background-color 0.15s ease;
   }
 
   .back-to-top.is-visible {
@@ -79,30 +72,34 @@ const { trigger } = Astro.props;
 
   @media (max-width: 900px) {
     .back-to-top-bar {
-      padding: 0 var(--space-lg);
-      display: flex;
-      justify-content: flex-end;
+      right: 1.25rem;
+      bottom: 1.25rem;
     }
   }
 </style>
 
 <script>
-  document.querySelectorAll<HTMLElement>("[data-back-to-top]").forEach((bar) => {
-    const button = bar.querySelector<HTMLButtonElement>(".back-to-top");
-    const trigger = bar.dataset.trigger;
-    const target = trigger ? document.querySelector(trigger) : null;
+  function setupBackToTop() {
+    document.querySelectorAll<HTMLElement>("[data-back-to-top]").forEach((bar) => {
+      const button = bar.querySelector<HTMLButtonElement>(".back-to-top");
+      const trigger = bar.dataset.trigger;
+      const target = trigger ? document.querySelector(trigger) : null;
 
-    if (!button || !target) return;
+      if (!button || !target) return;
 
-    const observer = new IntersectionObserver(([entry]) => {
-      const scrolledPast = !entry.isIntersecting && entry.boundingClientRect.top < 0;
-      button.classList.toggle("is-visible", scrolledPast);
+      const observer = new IntersectionObserver(([entry]) => {
+        const scrolledPast = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+        button.classList.toggle("is-visible", scrolledPast);
+      });
+      observer.observe(target);
+
+      button.addEventListener("click", () => {
+        const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+      });
     });
-    observer.observe(target);
+  }
 
-    button.addEventListener("click", () => {
-      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
-    });
-  });
+  setupBackToTop();
+  document.addEventListener("astro:page-load", setupBackToTop);
 </script>
