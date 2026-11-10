@@ -179,12 +179,6 @@ importers:
       '@astrojs/sitemap':
         specifier: ^3.7.4
         version: 3.7.4
-      '@fontsource-variable/noto-serif-sc':
-        specifier: ^5.3.1
-        version: 5.3.1
-      '@fontsource/jetbrains-mono':
-        specifier: ^5.3.0
-        version: 5.3.0
       '@vercel/analytics':
         specifier: ^2.0.1
         version: 2.0.1
@@ -198,9 +192,12 @@ importers:
       '@astrojs/check':
         specifier: ^0.9.12
         version: 0.9.12(@emnapi/runtime@1.11.3)(prettier@3.9.10)(typescript@5.9.3)
-      pinyin-pro:
-        specifier: ^3.29.5
-        version: 3.29.5
+      '@astrojs/markdown-remark':
+        specifier: ^7.3.6
+        version: 7.3.6
+      playwright-core:
+        specifier: ^1.65.0
+        version: 1.65.0
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -475,12 +472,6 @@ packages:
 
   '@emnapi/wasi-threads@1.2.3':
     resolution: {integrity: sha512-ELEBe8PsLvvJ6QMr0zLt8ffvOHW/dc1m3CEzNMg7aJUv3bMaoDtw2TXyDAwkYBuroxxuHEwhRTLJSe5sya547g==}
-
-  '@fontsource-variable/noto-serif-sc@5.3.1':
-    resolution: {integrity: sha512-aIHcBaL13QctVaJFeT6wqfgO9Rq/cNtD5g2ob4ze59fYPYwacGthnIrHBe83kDpMEB/k6VGtGc6fS99RImcoSQ==}
-
-  '@fontsource/jetbrains-mono@5.3.0':
-    resolution: {integrity: sha512-fqDfB5I9f1p1TV486aUgB9t8zP84P0O1FtQR5Ol9vjwPy+S+EIGlVYm1cvj2W5shcZMTg2nZFdVMoH5wFu8a1A==}
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -2138,8 +2129,10 @@ packages:
     resolution: {integrity: sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==}
     engines: {node: '>=12'}
 
-  pinyin-pro@3.29.5:
-    resolution: {integrity: sha512-Fk5YoRmtdHqJWqAuzYVG/NzvzeCbaG+ZEwbY6Nbps3QAIrvQQEtcm49frcyCM8i2b5najnzPDtYqrHRYTTiuwQ==}
+  playwright-core@1.65.0:
+    resolution: {integrity: sha512-vNSKgH6YqtN7cdT/L334zo0a+YwkrpicyrHJlWWPIm/Q+Nn2SWInil01oT0mbu96U4GgoRtCYQD9CzJQgju+lA==}
+    engines: {node: '>=20'}
+    hasBin: true
 
   points-on-curve@0.2.0:
     resolution: {integrity: sha512-0mYKnYYe9ZcqMCWhUjItv/oHjvgEsfKvnUTg8sAtnHr3GVy7rGkXCb6d5cSyqrWqL4k81b9CPg3urd+T7aop3A==}
@@ -2876,7 +2869,6 @@ snapshots:
       vfile: 6.0.3
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   '@astrojs/markdown-satteri@0.4.7':
     dependencies:
@@ -3039,10 +3031,6 @@ snapshots:
     dependencies:
       tslib: 2.9.1
 
-  '@fontsource-variable/noto-serif-sc@5.3.1': {}
-
-  '@fontsource/jetbrains-mono@5.3.0': {}
-
   '@iconify/types@2.0.0': {}
 
   '@iconify/utils@3.1.7':
@@ -3189,7 +3177,6 @@ snapshots:
       vfile: 6.0.3
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   '@mermaid-js/parser@2.0.1':
     dependencies:
@@ -3486,7 +3473,6 @@ snapshots:
   '@types/debug@4.1.13':
     dependencies:
       '@types/ms': 2.1.0
-    optional: true
 
   '@types/estree-jsx@1.0.5':
     dependencies:
@@ -3504,11 +3490,9 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.3
 
-  '@types/mdx@2.0.14':
-    optional: true
+  '@types/mdx@2.0.14': {}
 
-  '@types/ms@2.1.0':
-    optional: true
+  '@types/ms@2.1.0': {}
 
   '@types/nlcst@2.0.3':
     dependencies:
@@ -3525,8 +3509,7 @@ snapshots:
   '@types/trusted-types@2.0.7':
     optional: true
 
-  '@types/unist@2.0.11':
-    optional: true
+  '@types/unist@2.0.11': {}
 
   '@types/unist@3.0.3': {}
 
@@ -3599,10 +3582,8 @@ snapshots:
   acorn-jsx@5.3.2(acorn@8.19.0):
     dependencies:
       acorn: 8.19.0
-    optional: true
 
-  acorn@8.19.0:
-    optional: true
+  acorn@8.19.0: {}
 
   ajv-draft-04@1.0.0(ajv@8.20.0):
     optionalDependencies:
@@ -3638,11 +3619,9 @@ snapshots:
 
   aria-query@5.3.2: {}
 
-  array-iterate@2.0.1:
-    optional: true
+  array-iterate@2.0.1: {}
 
-  astring@1.9.0:
-    optional: true
+  astring@1.9.0: {}
 
   astro@7.4.7(@astrojs/markdown-remark@7.3.6)(@types/node@24.19.2)(yaml@2.9.1):
     dependencies:
@@ -3746,11 +3725,9 @@ snapshots:
 
   character-entities-legacy@3.0.0: {}
 
-  character-entities@2.0.2:
-    optional: true
+  character-entities@2.0.2: {}
 
-  character-reference-invalid@2.0.1:
-    optional: true
+  character-reference-invalid@2.0.1: {}
 
   chevrotain@13.2.0:
     dependencies:
@@ -3774,8 +3751,7 @@ snapshots:
 
   clsx@2.1.1: {}
 
-  collapse-white-space@2.1.0:
-    optional: true
+  collapse-white-space@2.1.0: {}
 
   comma-separated-tokens@2.0.3: {}
 
@@ -4017,12 +3993,10 @@ snapshots:
   debug@4.4.3:
     dependencies:
       ms: 2.1.3
-    optional: true
 
   decode-named-character-reference@1.3.0:
     dependencies:
       character-entities: 2.0.2
-    optional: true
 
   defu@6.1.7: {}
 
@@ -4079,8 +4053,7 @@ snapshots:
 
   entities@4.5.0: {}
 
-  entities@9.0.0:
-    optional: true
+  entities@9.0.0: {}
 
   es-module-lexer@3.0.4: {}
 
@@ -4092,7 +4065,6 @@ snapshots:
       devlop: 1.1.0
       estree-util-visit: 2.0.0
       unist-util-position-from-estree: 2.0.0
-    optional: true
 
   esast-util-from-js@2.0.1:
     dependencies:
@@ -4100,17 +4072,14 @@ snapshots:
       acorn: 8.19.0
       esast-util-from-estree: 2.0.0
       vfile-message: 4.0.4
-    optional: true
 
   escalade@3.2.0: {}
 
-  escape-string-regexp@5.0.0:
-    optional: true
+  escape-string-regexp@5.0.0: {}
 
   estree-util-attach-comments@3.0.0:
     dependencies:
       '@types/estree': 1.0.10
-    optional: true
 
   estree-util-build-jsx@3.0.1:
     dependencies:
@@ -4118,34 +4087,28 @@ snapshots:
       devlop: 1.1.0
       estree-util-is-identifier-name: 3.0.0
       estree-walker: 3.0.3
-    optional: true
 
-  estree-util-is-identifier-name@3.0.0:
-    optional: true
+  estree-util-is-identifier-name@3.0.0: {}
 
   estree-util-scope@1.0.1:
     dependencies:
       '@types/estree': 1.0.10
       devlop: 1.1.0
-    optional: true
 
   estree-util-to-js@2.0.0:
     dependencies:
       '@types/estree-jsx': 1.0.5
       astring: 1.9.0
       source-map: 0.7.6
-    optional: true
 
   estree-util-visit@2.0.0:
     dependencies:
       '@types/estree-jsx': 1.0.5
       '@types/unist': 3.0.3
-    optional: true
 
   estree-walker@3.0.3:
     dependencies:
       '@types/estree': 1.0.10
-    optional: true
 
   extend@3.0.2: {}
 
@@ -4228,7 +4191,6 @@ snapshots:
       parse5: 8.1.1
       vfile: 6.0.3
       vfile-message: 4.0.4
-    optional: true
 
   hast-util-from-parse5@8.0.4:
     dependencies:
@@ -4240,12 +4202,10 @@ snapshots:
       vfile: 6.0.3
       vfile-location: 5.0.4
       web-namespaces: 2.0.1
-    optional: true
 
   hast-util-parse-selector@4.0.0:
     dependencies:
       '@types/hast': 3.0.5
-    optional: true
 
   hast-util-raw@9.2.0:
     dependencies:
@@ -4262,7 +4222,6 @@ snapshots:
       vfile: 6.0.3
       web-namespaces: 2.0.1
       zwitch: 2.0.4
-    optional: true
 
   hast-util-to-estree@3.1.3:
     dependencies:
@@ -4284,7 +4243,6 @@ snapshots:
       zwitch: 2.0.4
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   hast-util-to-html@9.0.6:
     dependencies:
@@ -4319,7 +4277,6 @@ snapshots:
       vfile-message: 4.0.4
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   hast-util-to-parse5@8.0.1:
     dependencies:
@@ -4330,12 +4287,10 @@ snapshots:
       space-separated-tokens: 2.0.2
       web-namespaces: 2.0.1
       zwitch: 2.0.4
-    optional: true
 
   hast-util-to-text@4.0.3:
     dependencies:
       '@types/hast': 3.0.5
-    optional: true
 
   hast-util-whitespace@3.0.0:
     dependencies:
@@ -4348,7 +4303,6 @@ snapshots:
       hast-util-parse-selector: 4.0.0
       property-information: 7.2.0
       space-separated-tokens: 2.0.2
-    optional: true
 
   html-escaper@3.0.3: {}
 
@@ -4362,11 +4316,9 @@ snapshots:
 
   import-meta-resolve@4.2.0: {}
 
-  inline-style-parser@0.2.7:
-    optional: true
+  inline-style-parser@0.2.7: {}
 
-  inline-style-parser@0.2.9:
-    optional: true
+  inline-style-parser@0.2.9: {}
 
   internmap@1.0.1: {}
 
@@ -4374,22 +4326,18 @@ snapshots:
 
   iron-webcrypto@1.2.1: {}
 
-  is-alphabetical@2.0.1:
-    optional: true
+  is-alphabetical@2.0.1: {}
 
   is-alphanumerical@2.0.1:
     dependencies:
       is-alphabetical: 2.0.1
       is-decimal: 2.0.1
-    optional: true
 
-  is-decimal@2.0.1:
-    optional: true
+  is-decimal@2.0.1: {}
 
   is-docker@4.0.0: {}
 
-  is-hexadecimal@2.0.1:
-    optional: true
+  is-hexadecimal@2.0.1: {}
 
   is-plain-obj@4.1.0: {}
 
@@ -4464,8 +4412,7 @@ snapshots:
 
   lodash-es@4.18.1: {}
 
-  longest-streak@3.1.0:
-    optional: true
+  longest-streak@3.1.0: {}
 
   lru-cache@11.5.3: {}
 
@@ -4479,11 +4426,9 @@ snapshots:
       '@babel/types': 7.29.11
       source-map-js: 1.2.2
 
-  markdown-extensions@2.0.0:
-    optional: true
+  markdown-extensions@2.0.0: {}
 
-  markdown-table@3.1.0:
-    optional: true
+  markdown-table@3.1.0: {}
 
   marked@16.4.2: {}
 
@@ -4492,7 +4437,6 @@ snapshots:
       '@types/mdast': 4.0.4
       '@types/unist': 3.0.3
       unist-util-visit: 5.2.0
-    optional: true
 
   mdast-util-find-and-replace@3.0.4:
     dependencies:
@@ -4500,7 +4444,6 @@ snapshots:
       escape-string-regexp: 5.0.0
       unist-util-is: 6.0.1
       unist-util-visit-parents: 6.1.0
-    optional: true
 
   mdast-util-from-markdown@2.1.0:
     dependencies:
@@ -4518,7 +4461,6 @@ snapshots:
       unist-util-stringify-position: 4.0.0
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   mdast-util-gfm-autolink-literal@2.1.0:
     dependencies:
@@ -4527,7 +4469,6 @@ snapshots:
       devlop: 1.1.0
       mdast-util-find-and-replace: 3.0.4
       micromark-util-character: 2.1.1
-    optional: true
 
   mdast-util-gfm-footnote@2.1.0:
     dependencies:
@@ -4538,7 +4479,6 @@ snapshots:
       micromark-util-normalize-identifier: 2.0.1
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   mdast-util-gfm-strikethrough@2.0.1:
     dependencies:
@@ -4547,7 +4487,6 @@ snapshots:
       mdast-util-to-markdown: 2.2.3
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   mdast-util-gfm-table@2.0.1:
     dependencies:
@@ -4560,7 +4499,6 @@ snapshots:
       unist-util-visit: 5.2.0
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   mdast-util-gfm-task-list-item@2.0.1:
     dependencies:
@@ -4570,7 +4508,6 @@ snapshots:
       mdast-util-to-markdown: 2.2.3
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   mdast-util-gfm@3.1.0:
     dependencies:
@@ -4583,7 +4520,6 @@ snapshots:
       mdast-util-to-markdown: 2.2.3
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   mdast-util-mdx-expression@2.0.1:
     dependencies:
@@ -4595,7 +4531,6 @@ snapshots:
       mdast-util-to-markdown: 2.2.3
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   mdast-util-mdx-jsx@3.2.1:
     dependencies:
@@ -4613,7 +4548,6 @@ snapshots:
       vfile-message: 4.0.4
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   mdast-util-mdx@3.0.0:
     dependencies:
@@ -4624,7 +4558,6 @@ snapshots:
       mdast-util-to-markdown: 2.2.3
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   mdast-util-mdxjs-esm@2.0.1:
     dependencies:
@@ -4636,13 +4569,11 @@ snapshots:
       mdast-util-to-markdown: 2.2.3
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   mdast-util-phrasing@4.1.0:
     dependencies:
       '@types/mdast': 4.0.4
       unist-util-is: 6.0.1
-    optional: true
 
   mdast-util-to-hast@13.2.1:
     dependencies:
@@ -4669,12 +4600,10 @@ snapshots:
       micromark-util-html-tag-name: 2.0.1
       unist-util-visit: 5.2.0
       zwitch: 2.0.4
-    optional: true
 
   mdast-util-to-string@4.0.0:
     dependencies:
       '@types/mdast': 4.0.4
-    optional: true
 
   mdn-data@2.0.28: {}
 
@@ -4724,7 +4653,6 @@ snapshots:
       micromark-util-subtokenize: 2.1.0
       micromark-util-symbol: 2.0.1
       micromark-util-types: 2.0.3
-    optional: true
 
   micromark-extension-gfm-autolink-literal@2.1.0:
     dependencies:
@@ -4732,7 +4660,6 @@ snapshots:
       micromark-util-sanitize-uri: 2.0.1
       micromark-util-symbol: 2.0.1
       micromark-util-types: 2.0.3
-    optional: true
 
   micromark-extension-gfm-footnote@2.1.0:
     dependencies:
@@ -4744,7 +4671,6 @@ snapshots:
       micromark-util-sanitize-uri: 2.0.1
       micromark-util-symbol: 2.0.1
       micromark-util-types: 2.0.3
-    optional: true
 
   micromark-extension-gfm-strikethrough@2.1.0:
     dependencies:
@@ -4754,7 +4680,6 @@ snapshots:
       micromark-util-resolve-all: 2.0.1
       micromark-util-symbol: 2.0.1
       micromark-util-types: 2.0.3
-    optional: true
 
   micromark-extension-gfm-table@2.1.2:
     dependencies:
@@ -4763,12 +4688,10 @@ snapshots:
       micromark-util-character: 2.1.1
       micromark-util-symbol: 2.0.1
       micromark-util-types: 2.0.3
-    optional: true
 
   micromark-extension-gfm-tagfilter@2.0.0:
     dependencies:
       micromark-util-types: 2.0.3
-    optional: true
 
   micromark-extension-gfm-task-list-item@2.1.0:
     dependencies:
@@ -4777,7 +4700,6 @@ snapshots:
       micromark-util-character: 2.1.1
       micromark-util-symbol: 2.0.1
       micromark-util-types: 2.0.3
-    optional: true
 
   micromark-extension-gfm@3.0.0:
     dependencies:
@@ -4789,7 +4711,6 @@ snapshots:
       micromark-extension-gfm-task-list-item: 2.1.0
       micromark-util-combine-extensions: 2.0.1
       micromark-util-types: 2.0.3
-    optional: true
 
   micromark-extension-mdx-expression@3.0.1:
     dependencies:
@@ -4801,7 +4722,6 @@ snapshots:
       micromark-util-events-to-acorn: 2.0.3
       micromark-util-symbol: 2.0.1
       micromark-util-types: 2.0.3
-    optional: true
 
   micromark-extension-mdx-jsx@3.0.2:
     dependencies:
@@ -4815,12 +4735,10 @@ snapshots:
       micromark-util-symbol: 2.0.1
       micromark-util-types: 2.0.3
       vfile-message: 4.0.4
-    optional: true
 
   micromark-extension-mdx-md@2.0.0:
     dependencies:
       micromark-util-types: 2.0.3
-    optional: true
 
   micromark-extension-mdxjs-esm@3.0.0:
     dependencies:
@@ -4833,7 +4751,6 @@ snapshots:
       micromark-util-types: 2.0.3
       unist-util-position-from-estree: 2.0.0
       vfile-message: 4.0.4
-    optional: true
 
   micromark-extension-mdxjs@3.0.0:
     dependencies:
@@ -4845,14 +4762,12 @@ snapshots:
       micromark-extension-mdxjs-esm: 3.0.0
       micromark-util-combine-extensions: 2.0.1
       micromark-util-types: 2.0.3
-    optional: true
 
   micromark-factory-destination@2.0.1:
     dependencies:
       micromark-util-character: 2.1.1
       micromark-util-symbol: 2.0.1
       micromark-util-types: 2.0.3
-    optional: true
 
   micromark-factory-label@2.0.1:
     dependencies:
@@ -4860,7 +4775,6 @@ snapshots:
       micromark-util-character: 2.1.1
       micromark-util-symbol: 2.0.1
       micromark-util-types: 2.0.3
-    optional: true
 
   micromark-factory-mdx-expression@2.0.3:
     dependencies:
@@ -4873,13 +4787,11 @@ snapshots:
       micromark-util-types: 2.0.3
       unist-util-position-from-estree: 2.0.0
       vfile-message: 4.0.4
-    optional: true
 
   micromark-factory-space@2.1.0:
     dependencies:
       micromark-util-character: 2.1.1
       micromark-util-types: 2.0.3
-    optional: true
 
   micromark-factory-title@2.0.1:
     dependencies:
@@ -4887,7 +4799,6 @@ snapshots:
       micromark-util-character: 2.1.1
       micromark-util-symbol: 2.0.1
       micromark-util-types: 2.0.3
-    optional: true
 
   micromark-factory-whitespace@2.0.1:
     dependencies:
@@ -4895,7 +4806,6 @@ snapshots:
       micromark-util-character: 2.1.1
       micromark-util-symbol: 2.0.1
       micromark-util-types: 2.0.3
-    optional: true
 
   micromark-util-character@2.1.1:
     dependencies:
@@ -4905,25 +4815,21 @@ snapshots:
   micromark-util-chunked@2.0.1:
     dependencies:
       micromark-util-symbol: 2.0.1
-    optional: true
 
   micromark-util-classify-character@2.0.1:
     dependencies:
       micromark-util-character: 2.1.1
       micromark-util-symbol: 2.0.1
       micromark-util-types: 2.0.3
-    optional: true
 
   micromark-util-combine-extensions@2.0.1:
     dependencies:
       micromark-util-chunked: 2.0.1
       micromark-util-types: 2.0.3
-    optional: true
 
   micromark-util-decode-numeric-character-reference@2.0.2:
     dependencies:
       micromark-util-symbol: 2.0.1
-    optional: true
 
   micromark-util-decode-string@2.0.1:
     dependencies:
@@ -4931,12 +4837,10 @@ snapshots:
       micromark-util-character: 2.1.1
       micromark-util-decode-numeric-character-reference: 2.0.2
       micromark-util-symbol: 2.0.1
-    optional: true
 
   micromark-util-edit-map@1.0.0:
     dependencies:
       micromark-util-types: 2.0.3
-    optional: true
 
   micromark-util-encode@2.0.1: {}
 
@@ -4949,20 +4853,16 @@ snapshots:
       micromark-util-symbol: 2.0.1
       micromark-util-types: 2.0.3
       vfile-message: 4.0.4
-    optional: true
 
-  micromark-util-html-tag-name@2.0.1:
-    optional: true
+  micromark-util-html-tag-name@2.0.1: {}
 
   micromark-util-normalize-identifier@2.0.1:
     dependencies:
       micromark-util-symbol: 2.0.1
-    optional: true
 
   micromark-util-resolve-all@2.0.1:
     dependencies:
       micromark-util-types: 2.0.3
-    optional: true
 
   micromark-util-sanitize-uri@2.0.1:
     dependencies:
@@ -4976,7 +4876,6 @@ snapshots:
       micromark-util-chunked: 2.0.1
       micromark-util-symbol: 2.0.1
       micromark-util-types: 2.0.3
-    optional: true
 
   micromark-util-symbol@2.0.1: {}
 
@@ -5004,12 +4903,10 @@ snapshots:
       micromark-util-types: 2.0.3
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   mrmime@2.0.1: {}
 
-  ms@2.1.3:
-    optional: true
+  ms@2.1.3: {}
 
   muggle-string@0.4.1: {}
 
@@ -5064,7 +4961,6 @@ snapshots:
       is-alphanumerical: 2.0.1
       is-decimal: 2.0.1
       is-hexadecimal: 2.0.1
-    optional: true
 
   parse-latin@7.0.0:
     dependencies:
@@ -5074,12 +4970,10 @@ snapshots:
       unist-util-modify-children: 4.0.0
       unist-util-visit-children: 3.0.0
       vfile: 6.0.3
-    optional: true
 
   parse5@8.1.1:
     dependencies:
       entities: 9.0.0
-    optional: true
 
   path-browserify@1.0.1: {}
 
@@ -5095,7 +4989,7 @@ snapshots:
 
   picomatch@4.0.7: {}
 
-  pinyin-pro@3.29.5: {}
+  playwright-core@1.65.0: {}
 
   points-on-curve@0.2.0: {}
 
@@ -5127,7 +5021,6 @@ snapshots:
       '@types/estree': 1.0.10
       estree-util-build-jsx: 3.0.1
       vfile: 6.0.3
-    optional: true
 
   recma-jsx@1.0.1(acorn@8.19.0):
     dependencies:
@@ -5137,7 +5030,6 @@ snapshots:
       recma-parse: 1.0.0
       recma-stringify: 1.0.0
       unified: 11.0.5
-    optional: true
 
   recma-parse@1.0.0:
     dependencies:
@@ -5145,7 +5037,6 @@ snapshots:
       esast-util-from-js: 2.0.1
       unified: 11.0.5
       vfile: 6.0.3
-    optional: true
 
   recma-stringify@1.0.0:
     dependencies:
@@ -5153,7 +5044,6 @@ snapshots:
       estree-util-to-js: 2.0.0
       unified: 11.0.5
       vfile: 6.0.3
-    optional: true
 
   regex-recursion@6.0.2:
     dependencies:
@@ -5170,7 +5060,6 @@ snapshots:
       '@types/hast': 3.0.5
       hast-util-raw: 9.2.0
       vfile: 6.0.3
-    optional: true
 
   rehype-recma@1.0.0:
     dependencies:
@@ -5179,14 +5068,12 @@ snapshots:
       hast-util-to-estree: 3.1.3
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   rehype-stringify@10.0.1:
     dependencies:
       '@types/hast': 3.0.5
       hast-util-to-html: 9.0.6
       unified: 11.0.5
-    optional: true
 
   remark-gfm@4.0.1:
     dependencies:
@@ -5198,7 +5085,6 @@ snapshots:
       unified: 11.0.5
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   remark-mdx@3.1.1:
     dependencies:
@@ -5206,7 +5092,6 @@ snapshots:
       micromark-extension-mdxjs: 3.0.0
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   remark-parse@11.0.0:
     dependencies:
@@ -5216,7 +5101,6 @@ snapshots:
       unified: 11.0.5
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   remark-rehype@11.1.2:
     dependencies:
@@ -5225,7 +5109,6 @@ snapshots:
       mdast-util-to-hast: 13.2.1
       unified: 11.0.5
       vfile: 6.0.3
-    optional: true
 
   remark-smartypants@3.0.3:
     dependencies:
@@ -5233,14 +5116,12 @@ snapshots:
       retext-smartypants: 6.2.0
       unified: 11.0.5
       unist-util-visit: 5.2.0
-    optional: true
 
   remark-stringify@11.0.0:
     dependencies:
       '@types/mdast': 4.0.4
       mdast-util-to-markdown: 2.2.3
       unified: 11.0.5
-    optional: true
 
   request-light@0.5.8: {}
 
@@ -5255,7 +5136,6 @@ snapshots:
       '@types/nlcst': 2.0.3
       parse-latin: 7.0.0
       unified: 11.0.5
-    optional: true
 
   retext-smartypants@6.2.0:
     dependencies:
@@ -5268,7 +5148,6 @@ snapshots:
       '@types/nlcst': 2.0.3
       nlcst-to-string: 4.0.0
       unified: 11.0.5
-    optional: true
 
   retext@9.0.0:
     dependencies:
@@ -5276,7 +5155,6 @@ snapshots:
       retext-latin: 4.0.0
       retext-stringify: 4.0.0
       unified: 11.0.5
-    optional: true
 
   robust-predicates@3.0.3: {}
 
@@ -5415,11 +5293,9 @@ snapshots:
 
   source-map-js@1.2.2: {}
 
-  source-map@0.7.6:
-    optional: true
+  source-map@0.7.6: {}
 
-  source-map@0.8.0:
-    optional: true
+  source-map@0.8.0: {}
 
   space-separated-tokens@2.0.2: {}
 
@@ -5452,17 +5328,14 @@ snapshots:
   style-to-js@1.1.21:
     dependencies:
       style-to-object: 1.0.14
-    optional: true
 
   style-to-object@1.0.14:
     dependencies:
       inline-style-parser: 0.2.7
-    optional: true
 
   style-to-object@2.0.2:
     dependencies:
       inline-style-parser: 0.2.9
-    optional: true
 
   stylis@4.4.0: {}
 
@@ -5540,12 +5413,10 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.3
       array-iterate: 2.0.1
-    optional: true
 
   unist-util-position-from-estree@2.0.0:
     dependencies:
       '@types/unist': 3.0.3
-    optional: true
 
   unist-util-position@5.0.0:
     dependencies:
@@ -5555,7 +5426,6 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.3
       unist-util-visit: 5.2.0
-    optional: true
 
   unist-util-stringify-position@4.0.0:
     dependencies:
@@ -5564,7 +5434,6 @@ snapshots:
   unist-util-visit-children@3.0.0:
     dependencies:
       '@types/unist': 3.0.3
-    optional: true
 
   unist-util-visit-parents@6.1.0:
     dependencies:
@@ -5594,7 +5463,6 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.3
       vfile: 6.0.3
-    optional: true
 
   vfile-message@4.0.4:
     dependencies:
@@ -5730,8 +5598,7 @@ snapshots:
 
   vscode-uri@3.2.0: {}
 
-  web-namespaces@2.0.1:
-    optional: true
+  web-namespaces@2.0.1: {}
 
   wrap-ansi@9.0.2:
     dependencies:
