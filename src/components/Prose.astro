@@ -2,6 +2,495 @@
   <slot />
 </div>
 
+<script>
+  import mermaid from 'mermaid';
+
+  // 莫兰迪低饱和度高级色彩体系（优雅克制，对比鲜明）
+  const mutedPalette = ['#84a59d', '#c97b63', '#ddb892', '#7e92a0', '#9a8c98', '#b5838d'];
+
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: 'base',
+    themeVariables: {
+      fontFamily: '"Noto Serif SC Variable", Georgia, serif',
+      fontSize: '15px',
+      primaryColor: '#fafaf9',
+      primaryTextColor: '#1a1a1a',
+      primaryBorderColor: '#333333',
+      lineColor: '#555555',
+      secondaryColor: '#f4f4f2',
+      tertiaryColor: '#ffffff',
+      edgeLabelBackground: '#fafaf9',
+      clusterBkg: '#fcfcfb',
+      clusterBorder: '#d4d4d0',
+      mainBkg: '#fafaf9',
+      nodeBorder: '#333333',
+      // 饼图低饱和度莫兰迪配色
+      pie1: mutedPalette[0],
+      pie2: mutedPalette[1],
+      pie3: mutedPalette[2],
+      pie4: mutedPalette[3],
+      pie5: mutedPalette[4],
+      pie6: mutedPalette[5],
+      pieTitleTextSize: '16px',
+      pieTitleTextColor: '#1a1a1a',
+      pieSectionTextColor: '#ffffff',
+      pieLegendTextColor: '#333333',
+      pieLegendTextSize: '13px',
+      pieStrokeColor: '#ffffff',
+      pieStrokeWidth: '2px',
+    },
+    themeCSS: `
+      * {
+        filter: none !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+      }
+      .node rect, .node circle, .node ellipse, .node polygon, .node path {
+        filter: none !important;
+        box-shadow: none !important;
+      }
+      .cluster rect {
+        filter: none !important;
+        box-shadow: none !important;
+      }
+      .label {
+        font-family: "Noto Serif SC Variable", Georgia, serif !important;
+        line-height: 1.5 !important;
+      }
+      /* 节点内部文本保持自然不换行，绝不因容器宽度微小偏差而挤断单字 */
+      .node foreignObject {
+        overflow: visible !important;
+      }
+      .node foreignObject div {
+        white-space: nowrap !important;
+        width: max-content !important;
+        text-align: center !important;
+      }
+      .pieTitleText {
+        font-family: "Noto Serif SC Variable", Georgia, serif !important;
+        font-weight: 600 !important;
+        fill: #1a1a1a !important;
+      }
+      .slice text {
+        font-family: "Noto Serif SC Variable", Georgia, serif !important;
+        font-weight: 600 !important;
+        fill: #ffffff !important;
+      }
+      .legend text {
+        font-family: "Noto Serif SC Variable", Georgia, serif !important;
+        font-size: 13px !important;
+        fill: #444444 !important;
+      }
+      /* 彻底移除饼图外围的深色大圆圈边框 */
+      .pieOuterCircle {
+        stroke: none !important;
+        stroke-width: 0 !important;
+        display: none !important;
+      }
+    `,
+    flowchart: {
+      curve: 'basis',
+      padding: 24,
+      nodeSpacing: 50,
+      rankSpacing: 50,
+      htmlLabels: true,
+      useMaxWidth: false,
+    },
+    pie: {
+      useMaxWidth: false,
+    },
+  });
+
+  async function renderMermaidCharts() {
+    const preElements = document.querySelectorAll<HTMLElement>(
+      'pre[data-language="mermaid"], pre.astro-code[data-language="mermaid"], pre code.language-mermaid'
+    );
+
+    for (let i = 0; i < preElements.length; i++) {
+      let target = preElements[i];
+      const preEl = target.tagName === 'CODE' ? target.closest('pre') : target;
+      if (!preEl || preEl.dataset.mermaidRendered) continue;
+      preEl.dataset.mermaidRendered = 'true';
+
+      const source = preEl.innerText?.trim() || preEl.textContent?.trim() || '';
+      if (!source) continue;
+
+      const container = document.createElement('div');
+      container.className = 'mermaid-chart-wrapper';
+      const id = `mermaid-svg-${Date.now()}-${i}`;
+
+      try {
+        const { svg } = await mermaid.render(id, source);
+        container.innerHTML = svg;
+        
+        // 彻底清除 SVG 内部生成的 filter 阴影属性和限制性的最大宽度
+        const svgEl = container.querySelector('svg');
+        if (svgEl) {
+          svgEl.removeAttribute('filter');
+          svgEl.querySelectorAll('*').forEach((el) => {
+            el.removeAttribute('filter');
+          });
+          svgEl.style.removeProperty('max-width');
+        }
+
+        // 动态检查所有节点尺寸，将外层 rect 与 foreignObject 拉宽，确保文字与边框充裕呼吸
+        container.querySelectorAll<SVGElement>('.node').forEach((nodeG) => {
+          const fo = nodeG.querySelector<SVGForeignObjectElement>('foreignObject');
+          const div = fo?.querySelector<HTMLDivElement>('div');
+          const rect = nodeG.querySelector<SVGRectElement>('rect');
+          if (fo && div && rect) {
+            const neededWidth = div.scrollWidth + 36;
+            const currentFoWidth = fo.width.baseVal.value;
+            if (neededWidth > currentFoWidth) {
+              fo.setAttribute('width', neededWidth.toString());
+              fo.setAttribute('x', (-neededWidth / 2).toString());
+              rect.setAttribute('width', (neededWidth + 10).toString());
+              rect.setAttribute('x', (-(neededWidth + 10) / 2).toString());
+            }
+          }
+        });
+
+        // 饼图莫兰迪低饱和度着色保障与外围深色圆圈去除
+        container.querySelectorAll<SVGElement>('.pieOuterCircle').forEach((circle) => {
+          circle.setAttribute('stroke', 'none');
+          circle.setAttribute('stroke-width', '0');
+          circle.style.display = 'none';
+        });
+
+        const slices = container.querySelectorAll<SVGPathElement>('.pieCircle, g.slices path, .slice path');
+        slices.forEach((slice, idx) => {
+          slice.setAttribute('fill', mutedPalette[idx % mutedPalette.length]);
+          slice.setAttribute('stroke', '#ffffff');
+          slice.setAttribute('stroke-width', '2px');
+        });
+
+        const legendRects = container.querySelectorAll<SVGRectElement>('g.legend rect, .legend rect');
+        legendRects.forEach((rect, idx) => {
+          rect.setAttribute('fill', mutedPalette[idx % mutedPalette.length]);
+          rect.setAttribute('stroke', '#ffffff');
+          rect.setAttribute('stroke-width', '1px');
+        });
+
+        preEl.parentNode?.replaceChild(container, preEl);
+      } catch (err) {
+        console.error('Mermaid render error:', err);
+      }
+    }
+  }
+
+  // 为所有 markdown 渲染的 table 自动包裹横向滚动容器
+  function setupTables() {
+    document.querySelectorAll('.prose table').forEach((table) => {
+      if (!table.parentElement?.classList.contains('table-wrapper')) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'table-wrapper';
+        table.parentNode?.insertBefore(wrapper, table);
+        wrapper.appendChild(table);
+      }
+    });
+  }
+
+  // 全屏画廊查看器 (Mermaid 图表 & Markdown 图片通用的全屏缩放模态框)
+  function setupMediaZoom() {
+    let modal = document.getElementById('media-zoom-modal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'media-zoom-modal';
+      modal.className = 'media-zoom-modal';
+      modal.innerHTML = `
+        <div class="zoom-backdrop"></div>
+        <button type="button" class="zoom-close-btn" aria-label="关闭全屏 (Esc)">&times;</button>
+        <div class="zoom-content-box">
+          <div class="zoom-canvas"></div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    const backdrop = modal.querySelector<HTMLElement>('.zoom-backdrop');
+    const closeBtn = modal.querySelector<HTMLElement>('.zoom-close-btn');
+    const canvas = modal.querySelector<HTMLElement>('.zoom-canvas');
+    const contentBox = modal.querySelector<HTMLElement>('.zoom-content-box');
+
+    let isCurrentSvg = false;
+    let baseInitialScale = 1;
+    let currentScale = 1;
+    let posX = 0;
+    let posY = 0;
+    let isPinching = false;
+    let isDragging = false;
+    let startDist = 0;
+    let startScale = 1;
+    let startX = 0;
+    let startY = 0;
+    let lastTapTime = 0;
+
+    function applyTransform(smooth = false) {
+      if (!canvas) return;
+      canvas.style.transition = smooth ? 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)' : 'none';
+      canvas.style.transform = `translate3d(${posX}px, ${posY}px, 0) scale(${currentScale})`;
+    }
+
+    function resetZoom() {
+      currentScale = baseInitialScale;
+      posX = 0;
+      posY = 0;
+      applyTransform(true);
+    }
+
+    function openModal(contentNode: Node) {
+      if (!modal || !canvas) return;
+      canvas.innerHTML = '';
+      const clone = contentNode.cloneNode(true) as HTMLElement;
+
+      isCurrentSvg = contentNode instanceof SVGElement || clone.tagName?.toLowerCase() === 'svg';
+      baseInitialScale = 1;
+
+      // 严格计算全屏模式下最大不超过页面 90% 的安全尺寸
+      const safeMaxW = window.innerWidth * 0.9;
+      const safeMaxH = window.innerHeight * 0.9;
+
+      if (isCurrentSvg) {
+        const svgEl = clone as unknown as SVGSVGElement;
+        const vb = svgEl.viewBox?.baseVal;
+        const origW = vb?.width || parseFloat(clone.getAttribute('width') || '800');
+        const origH = vb?.height || parseFloat(clone.getAttribute('height') || '500');
+
+        // 扣除内边距 padding 48px 计算可用空间
+        const pad = 48;
+        const availW = safeMaxW - pad;
+        const availH = safeMaxH - pad;
+        const fitRatio = Math.min(availW / origW, availH / origH);
+
+        // 自适应缩放至恰好占满 90% 视窗的最大边界，绝不超出 90%
+        const optimalW = Math.min(origW * fitRatio, availW);
+        const optimalH = Math.min(origH * fitRatio, availH);
+
+        clone.style.width = `${optimalW}px`;
+        clone.style.height = `${optimalH}px`;
+        clone.style.maxWidth = `${safeMaxW}px`;
+        clone.style.maxHeight = `${safeMaxH}px`;
+        clone.style.boxSizing = 'border-box';
+        clone.style.margin = '0';
+      } else {
+        clone.style.maxWidth = `${safeMaxW}px`;
+        clone.style.maxHeight = `${safeMaxH}px`;
+        clone.style.objectFit = 'contain';
+        clone.style.boxSizing = 'border-box';
+        clone.style.margin = '0';
+      }
+
+      canvas.appendChild(clone);
+      resetZoom();
+
+      modal.classList.add('active');
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      if (!modal) return;
+      modal.classList.remove('active');
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+      setTimeout(() => {
+        if (canvas) canvas.innerHTML = '';
+      }, 200);
+    }
+
+    // 1. 点击遮罩背景或关闭按钮退出全屏
+    backdrop?.addEventListener('click', closeModal);
+    closeBtn?.addEventListener('click', closeModal);
+    contentBox?.addEventListener('click', (e) => {
+      if (e.target === contentBox) {
+        closeModal();
+      }
+    });
+
+    // 2. 按下 ESC 键退出全屏
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closeModal();
+      }
+    });
+
+    // 3. 移动端触控交互：双击放大、双指捏合缩放 (Pinch-to-zoom)、单指拖拽平移
+    contentBox?.addEventListener('touchstart', (e: TouchEvent) => {
+      const now = Date.now();
+      if (e.touches.length === 1) {
+        if (now - lastTapTime < 300) {
+          // 双击在 1x (完整的 90% 视界) 与 2.2x 局部放大之间切换
+          if (currentScale > 1.05) {
+            resetZoom();
+          } else {
+            currentScale = 2.2;
+            posX = 0;
+            posY = 0;
+            applyTransform(true);
+          }
+          lastTapTime = 0;
+          e.preventDefault();
+          return;
+        }
+        lastTapTime = now;
+
+        if (currentScale > 1) {
+          isDragging = true;
+          startX = e.touches[0].clientX - posX;
+          startY = e.touches[0].clientY - posY;
+        }
+      } else if (e.touches.length === 2) {
+        isPinching = true;
+        isDragging = false;
+        startDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        startScale = currentScale;
+      }
+    }, { passive: false });
+
+    contentBox?.addEventListener('touchmove', (e: TouchEvent) => {
+      if (isPinching && e.touches.length === 2) {
+        e.preventDefault();
+        const dist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        currentScale = Math.min(Math.max(1, startScale * (dist / startDist)), 4.5);
+        applyTransform(false);
+      } else if (isDragging && e.touches.length === 1) {
+        e.preventDefault();
+        posX = e.touches[0].clientX - startX;
+        posY = e.touches[0].clientY - startY;
+        applyTransform(false);
+      }
+    }, { passive: false });
+
+    contentBox?.addEventListener('touchend', (e: TouchEvent) => {
+      if (e.touches.length === 0) {
+        isPinching = false;
+        isDragging = false;
+        if (currentScale < 1) {
+          resetZoom();
+        }
+      }
+    });
+
+    // 4. 桌面端鼠标滚轮微调缩放
+    contentBox?.addEventListener('wheel', (e: WheelEvent) => {
+      e.preventDefault();
+      const delta = e.deltaY < 0 ? 0.2 : -0.2;
+      currentScale = Math.min(Math.max(1, currentScale + delta), 4.5);
+      if (currentScale <= 1.02) {
+        currentScale = 1;
+        posX = 0;
+        posY = 0;
+      }
+      applyTransform(true);
+    }, { passive: false });
+
+    // 5. 绑定所有 Mermaid 流程图与 Markdown 图片的点击全屏
+    function bindZoomEvents() {
+      // Mermaid 容器点击放大
+      document.querySelectorAll<HTMLElement>('.mermaid-chart-wrapper').forEach((wrapper) => {
+        if (wrapper.dataset.zoomBound) return;
+        wrapper.dataset.zoomBound = 'true';
+        wrapper.style.cursor = 'zoom-in';
+        wrapper.setAttribute('title', '点击全屏查看');
+        wrapper.addEventListener('click', () => {
+          const svg = wrapper.querySelector('svg');
+          if (svg) openModal(svg);
+        });
+      });
+
+      // Markdown 正文图片点击放大
+      document.querySelectorAll<HTMLImageElement>('.prose img').forEach((img) => {
+        if (img.dataset.zoomBound) return;
+        img.dataset.zoomBound = 'true';
+        img.style.cursor = 'zoom-in';
+        img.setAttribute('title', '点击全屏查看');
+        img.addEventListener('click', () => {
+          openModal(img);
+        });
+      });
+    }
+
+    bindZoomEvents();
+    // 异步保险触发
+    setTimeout(bindZoomEvents, 400);
+    setTimeout(bindZoomEvents, 1200);
+  }
+
+  // 代码块右上角复制按钮 (hover 显示、复制反馈、2s 或 mouseleave 重置)
+  function setupCodeCopyButtons() {
+    const codeBlocks = document.querySelectorAll<HTMLElement>('.prose pre:not([data-language="mermaid"])');
+
+    codeBlocks.forEach((pre) => {
+      if (pre.dataset.copyBound) return;
+      pre.dataset.copyBound = 'true';
+
+      const copyBtn = document.createElement('button');
+      copyBtn.type = 'button';
+      copyBtn.className = 'code-copy-btn';
+      copyBtn.textContent = '复制';
+      copyBtn.setAttribute('aria-label', '复制代码内容');
+
+      let timer: number | null = null;
+
+      function resetToCopy() {
+        if (timer) {
+          clearTimeout(timer);
+          timer = null;
+        }
+        copyBtn.textContent = '复制';
+        copyBtn.classList.remove('copied');
+      }
+
+      copyBtn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const codeEl = pre.querySelector('code');
+        const textToCopy = codeEl ? codeEl.innerText : pre.innerText;
+
+        try {
+          await navigator.clipboard.writeText(textToCopy);
+        } catch {
+          const textarea = document.createElement('textarea');
+          textarea.value = textToCopy;
+          document.body.appendChild(textarea);
+          textarea.select();
+          (document as any)['execCommand']?.('copy');
+          document.body.removeChild(textarea);
+        }
+
+        copyBtn.textContent = '已复制';
+        copyBtn.classList.add('copied');
+
+        if (timer) clearTimeout(timer);
+        timer = window.setTimeout(resetToCopy, 2000);
+      });
+
+      // 鼠标离开该代码块后，立即重置为“复制”
+      pre.addEventListener('mouseleave', () => {
+        resetToCopy();
+      });
+
+      pre.appendChild(copyBtn);
+    });
+  }
+
+  function initProse() {
+    setupTables();
+    renderMermaidCharts();
+    setupMediaZoom();
+    setupCodeCopyButtons();
+  }
+
+  initProse();
+  document.addEventListener('astro:page-load', initProse);
+</script>
+
 <style>
   .prose {
     font-family: var(--font-body);
@@ -22,6 +511,7 @@
     margin-top: 2.5em;
     margin-bottom: 0.75em;
     color: var(--color-text);
+    scroll-margin-top: 2.5rem;
   }
 
   .prose :global(h3) {
@@ -32,6 +522,18 @@
     margin-top: 2em;
     margin-bottom: 0.75em;
     color: var(--color-text);
+    scroll-margin-top: 2.5rem;
+  }
+
+  .prose :global(h4) {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-top: 1.75em;
+    margin-bottom: 0.5em;
+    color: var(--color-text);
+    scroll-margin-top: 2.5rem;
   }
 
   .prose :global(a) {
@@ -70,6 +572,7 @@
   }
 
   .prose :global(pre) {
+    position: relative;
     background-color: var(--color-code-bg);
     padding: var(--space-lg);
     border-radius: 4px;
@@ -78,6 +581,42 @@
     line-height: 1.5;
     scrollbar-color: #c9c9c2 transparent;
     scrollbar-width: thin;
+  }
+
+  /* 代码块右上角极简纯文本复制按钮：无背景、无容器、无边框，采用 mono font */
+  .prose :global(.code-copy-btn) {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.875rem;
+    padding: 0;
+    margin: 0;
+    font-family: var(--font-mono) !important;
+    font-size: 0.75rem;
+    line-height: 1;
+    color: var(--color-text-tertiary);
+    background: none !important;
+    border: none !important;
+    border-radius: 0;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease, visibility 0.15s ease, color 0.15s ease;
+    user-select: none;
+    z-index: 5;
+  }
+
+  .prose :global(pre:hover .code-copy-btn) {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .prose :global(.code-copy-btn:hover) {
+    color: var(--color-text);
+  }
+
+  .prose :global(.code-copy-btn.copied) {
+    color: #436436;
+    font-weight: 500;
   }
 
   .prose :global(pre)::-webkit-scrollbar {
@@ -114,9 +653,266 @@
   .prose :global(img) {
     border-radius: 4px;
     margin: 1.5em 0;
+    transition: opacity 0.15s ease;
+  }
+
+  .prose :global(img:hover) {
+    opacity: 0.95;
   }
 
   .prose :global(strong) {
     font-weight: 600;
+  }
+
+  /* Table 优雅渲染与排版能力 */
+  .prose :global(.table-wrapper) {
+    width: 100%;
+    overflow-x: auto;
+    margin: 2em 0;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background-color: var(--color-surface);
+    scrollbar-width: thin;
+    scrollbar-color: #c9c9c2 transparent;
+    box-shadow: none !important;
+  }
+
+  .prose :global(.table-wrapper)::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .prose :global(.table-wrapper)::-webkit-scrollbar-thumb {
+    background-color: #c9c9c2;
+    border-radius: 999px;
+  }
+
+  .prose :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    text-align: left;
+    margin: 0;
+    min-width: 480px;
+  }
+
+  .prose :global(thead) {
+    background-color: var(--color-code-bg);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .prose :global(th) {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    color: var(--color-text);
+    padding: 0.625rem 0.875rem;
+    border-right: 1px solid var(--color-border);
+    white-space: nowrap;
+  }
+
+  .prose :global(th:last-child) {
+    border-right: none;
+  }
+
+  .prose :global(td) {
+    padding: 0.625rem 0.875rem;
+    border-bottom: 1px solid var(--color-border);
+    border-right: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+    vertical-align: top;
+  }
+
+  .prose :global(td:last-child) {
+    border-right: none;
+  }
+
+  .prose :global(tbody tr:last-child td) {
+    border-bottom: none;
+  }
+
+  .prose :global(tbody tr:hover) {
+    background-color: rgba(0, 0, 0, 0.018);
+  }
+
+  /* Mermaid 渲染前占位容器与纯 CSS Loading Spinner（绝不显示原始代码文本，不加任何文字） */
+  .prose :global(pre[data-language="mermaid"]) {
+    position: relative;
+    min-height: 140px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    margin: 2.25em 0;
+  }
+
+  .prose :global(pre[data-language="mermaid"] code) {
+    display: none !important;
+  }
+
+  .prose :global(pre[data-language="mermaid"]::after) {
+    content: "";
+    display: block;
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--color-border);
+    border-top-color: var(--color-text-secondary);
+    border-radius: 50%;
+    animation: mermaid-spin 0.75s linear infinite;
+  }
+
+  @keyframes mermaid-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Mermaid 矢量图表容器（支持点击全屏查看与呼吸感） */
+  .prose :global(.mermaid-chart-wrapper) {
+    margin: 2.5em 0;
+    padding: 2rem 1.5rem;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: auto;
+    box-shadow: none !important;
+    scrollbar-width: thin;
+    scrollbar-color: #c9c9c2 transparent;
+    width: 100%;
+    transition: border-color 0.15s ease;
+  }
+
+  .prose :global(.mermaid-chart-wrapper:hover) {
+    border-color: #adada6;
+  }
+
+  .prose :global(.mermaid-chart-wrapper svg) {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    box-shadow: none !important;
+    filter: none !important;
+  }
+
+  .prose :global(.mermaid-chart-wrapper svg *) {
+    box-shadow: none !important;
+    filter: none !important;
+    text-shadow: none !important;
+  }
+
+  /* 彻底消除饼图外围的深色大圆圈边框 */
+  .prose :global(.mermaid-chart-wrapper svg .pieOuterCircle) {
+    stroke: none !important;
+    stroke-width: 0 !important;
+    display: none !important;
+  }
+
+  /* 全屏查看模态框 (Media Zoom Lightbox) */
+  :global(.media-zoom-modal) {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+    pointer-events: none;
+  }
+
+  :global(.media-zoom-modal.active) {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  :global(.zoom-backdrop) {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(18, 18, 18, 0.82); /* 略透明黑色遮罩 */
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  :global(.zoom-close-btn) {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    width: 38px;
+    height: 38px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    color: #ffffff;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100002;
+    transition: all 0.15s ease;
+  }
+
+  :global(.zoom-close-btn:hover) {
+    background: rgba(255, 255, 255, 0.28);
+    transform: scale(1.05);
+  }
+
+  :global(.zoom-content-box) {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    z-index: 100001;
+    touch-action: none;
+    cursor: grab;
+  }
+
+  :global(.zoom-content-box:active) {
+    cursor: grabbing;
+  }
+
+  :global(.zoom-canvas) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform-origin: center center;
+    will-change: transform;
+    max-width: 90vw;
+    max-height: 90vh;
+  }
+
+  :global(.zoom-canvas svg) {
+    max-width: 90vw !important;
+    max-height: 90vh !important;
+    width: auto;
+    height: auto;
+    background-color: var(--color-surface);
+    padding: 1.5rem;
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+    box-sizing: border-box;
+  }
+
+  :global(.zoom-canvas img) {
+    max-width: 90vw !important;
+    max-height: 90vh !important;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+    box-sizing: border-box;
   }
 </style>
