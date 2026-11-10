@@ -29,18 +29,12 @@ const taxonomyHref = (type: "category" | "tag", value: string) =>
     </p>
     {(categories.length > 0 || tags.length > 0) && (
       <div class="article-taxonomy">
-        {categories.length > 0 && (
-          <p>
-            <span class="taxonomy-label">Categories:</span>
-            {categories.map((category) => <a href={taxonomyHref("category", category)}>{category}</a>)}
-          </p>
-        )}
-        {tags.length > 0 && (
-          <p>
-            <span class="taxonomy-label">Tags:</span>
-            {tags.map((tag) => <a href={taxonomyHref("tag", tag)}>{tag}</a>)}
-          </p>
-        )}
+        {categories.map((category) => (
+          <a href={taxonomyHref("category", category)}>{category}</a>
+        ))}
+        {tags.map((tag) => (
+          <a href={taxonomyHref("tag", tag)}>{tag}</a>
+        ))}
       </div>
     )}
   </header>
@@ -51,7 +45,8 @@ const taxonomyHref = (type: "category" | "tag", value: string) =>
 
 <style>
   .article {
-    max-width: var(--width-content);
+    width: 100%;
+    max-width: 100%;
   }
 
   .article-header {
@@ -70,28 +65,18 @@ const taxonomyHref = (type: "category" | "tag", value: string) =>
 
   .article-taxonomy {
     display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
-    margin-top: var(--space-md);
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-xs) var(--space-sm);
+    margin-top: var(--space-xs);
     font-family: var(--font-heading);
     font-size: 0.8125rem;
-    color: var(--color-text-tertiary);
-  }
-
-  .article-taxonomy p {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs) var(--space-sm);
-    align-items: baseline;
-  }
-
-  .taxonomy-label {
-    color: var(--color-text-tertiary);
   }
 
   .article-taxonomy a {
-    color: var(--color-text-secondary);
+    color: var(--color-text-tertiary);
     text-decoration: none;
+    transition: color 0.15s ease;
   }
 
   .article-taxonomy a:hover {
