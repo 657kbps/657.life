@@ -16,7 +16,7 @@ export async function getStaticPaths() {
 }
 
 const post: Post = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
 
 const postUrl = new URL(`/posts/${post.id}`, Astro.site).href;
 
@@ -44,7 +44,12 @@ const jsonLd = {
 };
 ---
 
-<Layout title={`${post.data.title} — 657.life`} description={post.data.description} ogType="article">
+<Layout
+  title={`${post.data.title} — 657.life`}
+  description={post.data.description}
+  ogType="article"
+  headings={headings}
+>
   <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <Article
     title={post.data.title}

@@ -1,0 +1,270 @@
+---
+interface HeadingItem {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  headings?: HeadingItem[];
+}
+
+const { headings = [] } = Astro.props;
+
+const tocHeadings = headings.filter(
+  (heading) => heading.depth >= 2 && heading.depth <= 3
+);
+---
+
+{tocHeadings.length > 0 && (
+  <aside class="dash-toc-container" aria-label="文章目录">
+    <nav class="minimal-dash-toc">
+      <ul class="dash-list">
+        {tocHeadings.map((heading) => (
+          <li
+            class={`dash-item depth-${heading.depth}`}
+            data-heading-slug={heading.slug}
+          >
+            <a
+              href={`#${heading.slug}`}
+              class="dash-link"
+              aria-label={heading.text}
+            >
+              <span class="dash-tooltip">{heading.text}</span>
+              <span class="dash-line" />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </aside>
+)}
+
+<script>
+  function setupDashToc() {
+    // 1. URL 带 hash 时的自动定位与平滑跳转
+    function scrollToCurrentHash() {
+      const rawHash = window.location.hash;
+      if (!rawHash) return;
+
+      let targetEl: HTMLElement | null = null;
+      try {
+        const decoded = decodeURIComponent(rawHash.slice(1));
+        targetEl = document.getElementById(decoded);
+      } catch (e) {}
+
+      if (!targetEl) {
+        targetEl = document.querySelector(rawHash);
+      }
+
+      if (targetEl) {
+        setTimeout(() => {
+          targetEl?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 120);
+      }
+    }
+
+    scrollToCurrentHash();
+    window.addEventListener('hashchange', scrollToCurrentHash);
+
+    // 2. 移动端保护：移动端（<=900px）不展示目录，绝对不执行滚动监听
+    const isMobile = window.innerWidth <= 900;
+    const tocContainer = document.querySelector('.dash-toc-container');
+    if (isMobile || !tocContainer) {
+      return;
+    }
+
+    // 3. 桌面端极简短横线目录高亮 (ScrollSpy)
+    const dashLinks = document.querySelectorAll<HTMLAnchorElement>('.dash-link');
+    const headingElements: HTMLElement[] = [];
+
+    dashLinks.forEach((link) => {
+      const href = link.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        try {
+          const id = decodeURIComponent(href.slice(1));
+          const el = document.getElementById(id);
+          if (el) {
+            headingElements.push(el);
+          }
+        } catch (e) {}
+      }
+    });
+
+    if (headingElements.length === 0) return;
+
+    let isTicking = false;
+
+    const updateActiveItem = () => {
+      const scrollY = window.scrollY + 100;
+      let activeHeading: HTMLElement | null = null;
+
+      for (let i = 0; i < headingElements.length; i++) {
+        const el = headingElements[i];
+        if (el.offsetTop <= scrollY) {
+          activeHeading = el;
+        } else {
+          break;
+        }
+      }
+
+      if (!activeHeading && headingElements.length > 0) {
+        activeHeading = headingElements[0];
+      }
+
+      if (activeHeading) {
+        const targetId = activeHeading.id;
+        dashLinks.forEach((link) => {
+          const href = link.getAttribute('href');
+          const isMatch = href === `#${targetId}` || href === `#${encodeURIComponent(targetId)}`;
+          if (isMatch) {
+            link.classList.add('active');
+          } else {
+            link.classList.remove('active');
+          }
+        });
+      }
+    };
+
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!isTicking) {
+          window.requestAnimationFrame(() => {
+            updateActiveItem();
+            isTicking = false;
+          });
+          isTicking = true;
+        }
+      },
+      { passive: true }
+    );
+
+    updateActiveItem();
+  }
+
+  setupDashToc();
+  document.addEventListener('astro:page-load', setupDashToc);
+</script>
+
+<style>
+  /* 极简短横线目录：固定在整个浏览器视窗的最右侧，垂直居中常驻，留出呼吸边距 */
+  .dash-toc-container {
+    position: fixed !important;
+    right: clamp(1rem, 1.8vw, 1.5rem) !important; /* 整个浏览器窗口的最右边，留出适度边距 */
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    z-index: 1000;
+    pointer-events: none;
+    width: auto !important;
+    max-height: 85vh;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
+  }
+
+  .minimal-dash-toc {
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .dash-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px; /* 短横线之间的垂直间距 */
+  }
+
+  .dash-item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .dash-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 5px 0; /* 垂直点击热区 */
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  /* 短横线主体 */
+  .dash-line {
+    display: block;
+    height: 2px;
+    background-color: #d4d4d0; /* 未激活浅灰色 */
+    border-radius: 1px;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* h2 一级标题较长 */
+  .depth-2 .dash-line {
+    width: 24px;
+  }
+
+  /* h3 二级标题较短 */
+  .depth-3 .dash-line {
+    width: 15px;
+    opacity: 0.85;
+  }
+
+  /* 激活状态：加粗加长深黑色，与参考图一致 */
+  .dash-link.active .dash-line {
+    width: 30px;
+    height: 3px;
+    background-color: var(--color-text);
+    border-radius: 1.5px;
+    opacity: 1;
+  }
+
+  /* 悬停状态：高亮并加长 */
+  .dash-link:hover .dash-line {
+    width: 30px;
+    background-color: var(--color-text);
+    opacity: 1;
+  }
+
+  /* 鼠标 hover 时在短横线左侧浮现完整标题 Tooltip（绝无截断、绝无原生title遮挡） */
+  .dash-tooltip {
+    position: absolute;
+    right: calc(100% + 12px);
+    white-space: nowrap !important;
+    font-family: var(--font-heading);
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    color: var(--color-text);
+    background-color: var(--color-surface);
+    padding: 5px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateX(6px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    box-shadow: none; /* 彻底无阴影 */
+    max-width: none !important; /* 绝不限制最大宽度，完整呈现全部文本 */
+    overflow: visible !important;
+    text-overflow: clip !important;
+    z-index: 1001;
+  }
+
+  .dash-link:hover .dash-tooltip {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* 移动端（<=900px）：短横线目录绝不渲染 */
+  @media (max-width: 900px) {
+    .dash-toc-container {
+      display: none !important;
+    }
+  }
+</style>
