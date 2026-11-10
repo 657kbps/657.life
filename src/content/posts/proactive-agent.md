@@ -1,10 +1,9 @@
 ---
 title: 主动式 Agent：从被动响应到自主协同
-description: 自 2022 年底大语言模型引爆新一轮人工智能浪潮以来，智能体（AI Agents）经历了从单轮 Prompt 工程、链式推理（Chain-of-Thought / ReAct）、工具增强（Tool Use）到多智能体协作（Multi-Agent Collaboration）的迅猛发展。然而，审视当今工业界绝大多数商用 Agent，其底层交互范式依旧被牢牢锁定在被动响应式（Reactive）的轨道上。
+description: 自 2022 年底大语言模型引爆新一轮人工智能浪潮以来，AI Agents 经历了从单轮 Prompt 工程、链式推理、工具增强到多智能体协作的迅猛发展。然而，审视当今工业界绝大多数商用 Agent，其底层交互范式依旧被牢牢锁定在被动响应式的轨道上。
 date: 2026-11-10
-categories:
-  - 随笔
 tags:
+  - 随笔
   - AI
   - Agent
 ---
@@ -197,13 +196,10 @@ ProAct 的工作流包含三大精巧组件：
 
 ```mermaid
 flowchart TD
-  subgraph 显式交流轨 ["外部可见显式交流轨 (Overt Track)"]
-    O1["面向用户的即时聊天视窗 / 协作工作台 / 结构化审批卡片"]
-  end
   subgraph 隐式思维轨 ["内部持续思维链轨 (Covert Track)"]
     I1["工作区连续事件流入"] --> I2["生成实时内心独白与状态评注"] --> I3["多维度评估局势演进与阻塞点"] --> I4["动态计算表达冲动指数 (Impulse Score)"]
   end
-  I4 -->|"冲动指数突破动态打扰门槛"| O1
+  I4 -->|"冲动指数突破动态打扰门槛"| O1["外部可见显式交流轨 (Overt Track)<br/>面向用户的即时聊天视窗 / 协作工作台 / 结构化审批卡片"]
 ```
 
 Agent 在隐式思维轨中持续对工作区发生的事态生成自我独白，并实时计算其 **表达冲动指数（Impulse Score）**：
