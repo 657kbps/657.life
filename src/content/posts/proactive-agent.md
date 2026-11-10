@@ -1,6 +1,6 @@
 ---
 title: 主动式 Agent：从被动响应到自主协同
-description: 自 2022 年底大语言模型引爆新一轮人工智能浪潮以来，智能体（AI Agents）经历了从单轮 Prompt 工程、链式推理（Chain-of-Thought / ReAct）、工具增强（Tool Use）到多智能体协作（Multi-Agent Collaboration）的迅猛发展。然而，审视当今工业界绝大多数商用 Agent，其底层交互范式依旧被牢牢锁定在 被动响应式（Reactive） 的轨道上。
+description: 自 2022 年底大语言模型引爆新一轮人工智能浪潮以来，智能体（AI Agents）经历了从单轮 Prompt 工程、链式推理（Chain-of-Thought / ReAct）、工具增强（Tool Use）到多智能体协作（Multi-Agent Collaboration）的迅猛发展。然而，审视当今工业界绝大多数商用 Agent，其底层交互范式依旧被牢牢锁定在被动响应式（Reactive）的轨道上。
 date: 2026-11-10
 categories:
   - 随笔
