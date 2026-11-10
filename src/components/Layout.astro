@@ -5,6 +5,7 @@ import Head from "./Head.astro";
 import Nav from "./Nav.astro";
 import Footer from "./Footer.astro";
 import Sidebar from "./Sidebar.astro";
+import DashToc from "./DashToc.astro";
 import "../styles/global.css";
 
 interface Props {
@@ -12,6 +13,8 @@ interface Props {
   description?: string;
   ogType?: "website" | "article";
   ogImage?: string;
+  headings?: Array<{ depth: number; slug: string; text: string }>;
+  showSidebar?: boolean;
 }
 
 const {
@@ -19,6 +22,8 @@ const {
   description = "Nothing happened today.",
   ogType = "website",
   ogImage,
+  headings = [],
+  showSidebar = ogType !== "article",
 } = Astro.props;
 
 const hasAfterNav = Astro.slots.has("after-nav");
@@ -37,14 +42,16 @@ const hasAfterNav = Astro.slots.has("after-nav");
           <slot name="after-nav" />
         </div>
       )}
-      <div class="page-content">
+      <div class:list={["page-content", { "page-content-no-sidebar": !showSidebar }]}>
         <main>
           <slot />
         </main>
-        <Sidebar />
+        {showSidebar && <Sidebar />}
       </div>
       <Footer />
     </div>
+
+    {headings.length > 0 && <DashToc headings={headings} />}
 
     <Analytics />
   </body>
@@ -75,6 +82,19 @@ const hasAfterNav = Astro.slots.has("after-nav");
     margin-top: var(--space-2xl);
   }
 
+  /* 文章页居中布局：不显示 sidebar，正文宽度舒展且为右侧目录预留安全避让间距 */
+  .page-content-no-sidebar {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .page-content-no-sidebar main {
+    width: 100%;
+    max-width: min(880px, calc(100% - 4.5rem));
+    margin: 0 auto;
+  }
+
   .after-nav {
     margin-top: var(--space-lg);
   }
@@ -91,6 +111,11 @@ const hasAfterNav = Astro.slots.has("after-nav");
     .page-content {
       grid-template-columns: minmax(0, 1fr);
       gap: var(--space-xl);
+    }
+
+    .page-content-no-sidebar main {
+      max-width: 100%;
+      margin: 0;
     }
   }
 
