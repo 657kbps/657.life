@@ -6,6 +6,12 @@
 
 - `pnpm dev` — 本地开发（使用 pnpm，勿用 npm/yarn）
 - `pnpm build` / `pnpm preview` — 构建与预览
+- `pnpm mermaid:build` — 扫描文章中的 Mermaid 图表并更新 `src/data/mermaid-cache.json`（需要本机 Chrome）
+
+### Mermaid 图表
+
+Vercel 构建镜像不预装 Chrome，线上构建只读取已提交的 `src/data/mermaid-cache.json`，不会启动浏览器。
+新增或修改文章中的 Mermaid 图表后，请先在本地运行 `pnpm mermaid:build`（或 `pnpm build`）并提交缓存文件；否则 Vercel 构建会明确报错并列出缺失的图表。
 
 ### Astro CLI
 

@@ -1,45 +1,9 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import crypto from 'node:crypto';
-import { fileURLToPath } from 'node:url';
-import { renderMermaidToHtml, closeBrowser } from './mermaid-renderer.mjs';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const CACHE_FILE_PATH = path.resolve(__dirname, '../data/mermaid-cache.json');
-
-// 内存中的缓存对象
-let cache = null;
-let isCacheDirty = false;
-
-function loadCache() {
-  if (cache) return cache;
-  try {
-    if (fs.existsSync(CACHE_FILE_PATH)) {
-      const raw = fs.readFileSync(CACHE_FILE_PATH, 'utf8');
-      cache = JSON.parse(raw);
-    } else {
-      cache = {};
-    }
-  } catch (err) {
-    console.warn('[remark-mermaid] Failed to load mermaid cache, starting fresh:', err);
-    cache = {};
-  }
-  return cache;
-}
-
-function saveCache() {
-  if (!isCacheDirty || !cache) return;
-  try {
-    const dir = path.dirname(CACHE_FILE_PATH);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    fs.writeFileSync(CACHE_FILE_PATH, JSON.stringify(cache, null, 2), 'utf8');
-    isCacheDirty = false;
-  } catch (err) {
-    console.error('[remark-mermaid] Failed to save mermaid cache:', err);
-  }
-}
+import {
+  getMermaidCacheKey,
+  isOfflineRenderMode,
+  loadMermaidCache,
+  saveMermaidCache,
+} from './mermaid-cache.mjs';
 
 // 递归遍历 AST
 function collectMermaidNodes(node, list = []) {
@@ -56,50 +20,60 @@ function collectMermaidNodes(node, list = []) {
 }
 
 /**
- * Remark 插件：在构建期将 Markdown 中的 ```mermaid 代码块预渲染为静态内联 SVG
+ * Remark 插件：把 ```mermaid 代码块替换为构建期预渲染好的静态内联 SVG。
+ *
+ * 设计原则：
+ * - 构建产物完全由 src/data/mermaid-cache.json 决定，页面运行时不需要 Mermaid JS；
+ * - Vercel 构建环境没有 Chrome，只做缓存读取；缓存缺失时明确报错，绝不静默降级；
+ * - 本地 `pnpm dev` 遇到新图表时可即时渲染并回写缓存，方便预览。
  */
 export default function remarkMermaid() {
   return async function transformer(tree) {
-    loadCache();
     const mermaidNodes = collectMermaidNodes(tree);
-
     if (mermaidNodes.length === 0) return;
 
-    for (let i = 0; i < mermaidNodes.length; i++) {
-      const node = mermaidNodes[i];
+    const cache = loadMermaidCache();
+    let cacheChanged = false;
+
+    for (const node of mermaidNodes) {
       const source = (node.value || '').trim();
       if (!source) continue;
 
-      // 根据代码源码计算 SHA256 哈希值
-      const hash = crypto.createHash('sha256').update(source).digest('hex').slice(0, 16);
+      const key = getMermaidCacheKey(source);
 
-      if (cache[hash]) {
-        // 命中静态缓存：直接输出预渲染好的内联 SVG HTML 结构
+      if (cache[key]) {
         node.type = 'html';
-        node.value = cache[hash];
-      } else {
-        // 未命中缓存：尝试通过无头浏览器实时渲染
-        try {
-          const id = `mermaid-svg-${hash}`;
-          const renderedHtml = await renderMermaidToHtml(source, id);
-          cache[hash] = renderedHtml;
-          isCacheDirty = true;
+        node.value = cache[key];
+        continue;
+      }
 
+      // 本地开发或无 Vercel 环境：尝试用本机 Chrome 即时渲染
+      if (!isOfflineRenderMode()) {
+        try {
+          const { renderMermaidToHtml } = await import('./mermaid-renderer.mjs');
+          const html = await renderMermaidToHtml(source, `mermaid-svg-${key}`);
+          cache[key] = html;
+          cacheChanged = true;
           node.type = 'html';
-          node.value = renderedHtml;
+          node.value = html;
+          continue;
         } catch (err) {
-          console.error(`[remark-mermaid] Error rendering mermaid diagram (${hash}):`, err.message);
-          // 优雅降级：保留代码块，以便构建不中断
+          console.warn(
+            `[remark-mermaid] Could not render diagram at line ${node.position?.start?.line ?? '?'}: ${err.message}`
+          );
+          continue;
         }
       }
+
+      throw new Error(
+        `[remark-mermaid] Missing pre-rendered SVG for diagram at line ${
+          node.position?.start?.line ?? '?'
+        } (cache key ${key}). Run \`pnpm mermaid:build\` locally and commit src/data/mermaid-cache.json.`
+      );
     }
 
-    saveCache();
+    if (cacheChanged) {
+      saveMermaidCache(cache);
+    }
   };
 }
-
-// 进程退出或完成时释放无头浏览器
-process.on('beforeExit', async () => {
-  saveCache();
-  await closeBrowser();
-});
